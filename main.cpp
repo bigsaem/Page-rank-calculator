@@ -1,52 +1,53 @@
-#include <iostream>
-#include <vector>
-#include "matrix.hpp"
+
+
+#include "main.hpp"
 using namespace std;
 
-int main() {
+int main()
+{
+    int rowNum = helper::getRow("Connectivity.txt");
+    int col = rowNum;
+    double** inputMT = helper::getInputMt("Connectivity.txt", rowNum);
+    double p{0.85};
+    double tolerance = 0.0001;
+    double val1, val2;
 
-    char W[4] = {'a','b','c','d'};
-    Matrix G(4);
-    int r[4] = {0,0,0,0};
-    int c[4] = {0,0,0,0};
-    G.set_value(0,1,1);
-    G.set_value(0,2,1);
-    G.set_value(1,0,1);
-    G.set_value(1,2,1);
-    G.set_value(2,0,1);
-    G.set_value(2,1,1);
-    G.getR(r, 4);
-    G.getC(c,4);
-    for (int i = 0; i < 4; i++)
-        cout << r[i]<<endl;
-    cout<<G;
+    Matrix G(inputMT, rowNum);
+    int numOf1Col[rowNum];
+    G.getC(numOf1Col,col);
+    G.importanceCalculate(numOf1Col);
+    Matrix Q = G.createQ();
+    Matrix M(rowNum);
+    M = G*p + Q*(1-p);
+    Matrix rank = G.createRank();
 
-////////////////////////////////
-////Matrix vv(2,5);
-////Matrix cc(2,3);
-////vv++;
-////cout<<vv;
-////cc++;
-////cc++;
-////cout<<cc;
-////vv+=cc;
-////cout<<vv;
-////
-////Matrix bb(vv + cc);
-////
-////cout<<bb;
-//
-//Matrix multi1(4,2);
-//multi1++;
-//cout<<multi1;
-//
-//Matrix multi2(2, 3);
-//multi2++;
-//multi2++;
-////cout<<multi2;
-////multi1*=multi2;
-////cout<<multi1;
-//    cout<<"wow"<<endl;
-//Matrix newone(multi1*multi2);
-//cout<<newone;
+    do{
+        val1 =  rank.get_value(0,0);
+        rank = M*rank;
+        val2 = rank.get_value(0,0);
+    } while(abs(val1-val2)>tolerance);
+
+    double ranksum = rank.sumOfCal(0);
+
+    rank /= ranksum;
+
+    cout<<fixed<<std::setprecision(2)<<rank;
+
+}
+
+
+
+void printInput(double** input, int size){
+    for(int i = 0; i<size;i++){
+        for(int j = 0; j<size; j++){
+            cout<<input[i][j];
+        }
+        cout<<endl;
+    }
+}
+
+Matrix createMatrix(double** input, int size) {
+    Matrix matrix(size);
+    matrix.setMatrix(input);
+    return matrix;
 }

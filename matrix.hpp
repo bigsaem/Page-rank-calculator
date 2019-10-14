@@ -4,6 +4,10 @@
 
 #ifndef ASSIGNMENT1_MATRIX_HPP
 #define ASSIGNMENT1_MATRIX_HPP
+#include <vector>
+#include <iostream>
+#include <cmath>
+#include <stdexcept>
 
 #endif //ASSIGNMENT1_MATRIX_HPP
 
@@ -21,11 +25,14 @@ private:
     friend Matrix operator+(Matrix origin, const Matrix& mt);
     friend Matrix operator-(Matrix origin, const Matrix& mt);
     friend Matrix operator*(Matrix origin, const Matrix& mt);
+    friend Matrix operator*(Matrix origin, double number);
+    friend Matrix operator/(Matrix origin, double number);
 public:
     explicit Matrix(int n = 1);
     Matrix(int r, int c);
     Matrix(std::vector<double> arr);
     Matrix(const Matrix& mt);
+    Matrix(double** input, int size);
     void set_value(int row, int column, double value);
     double get_value(int row, int column);
     void clear();
@@ -39,8 +46,15 @@ public:
     Matrix& operator+=(const Matrix& mt);
     Matrix& operator-=(const Matrix& mt);
     Matrix& operator*=(const Matrix& mt);
-    void getR(int* a, int n);
-    void getC(int* a, int n);
+    Matrix& operator*=(double number);
+    Matrix& operator/=(double number);
+    Matrix createQ();
+    Matrix createRank();
+    void setMatrix(double **matrix);
+    void getR(int* arr, int mtSize);
+    void getC(int* arr, int mtSize);
+    double sumOfCal(int column);
+    void importanceCalculate(int* column);
 
 };
 
