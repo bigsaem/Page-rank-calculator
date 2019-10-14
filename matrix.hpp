@@ -19,6 +19,7 @@ class Matrix
 private:
     int n,r,c;
     double **matrix;
+    void mySwap(Matrix &another);
     friend std::ostream& operator<<(std::ostream& os, const Matrix& mt);
     friend bool operator==(const Matrix &mt1, const Matrix &mt2);
     friend bool operator!= (const Matrix &lhs, const Matrix &rhs);
@@ -36,22 +37,21 @@ public:
     void set_value(const int row, const int column, const double value);
     double get_value(const int row, const int column)const;
     void clear();
+    void getC(int* arr, const int arrSize)const;
+    double sumOfCal(const int column)const;
+    void importanceCalculate(int* numOf1)const;
+    Matrix createQ();
+    Matrix createRank();
     ~Matrix();
     Matrix& operator++();
     Matrix operator++(int);
     Matrix& operator--();
     Matrix operator--(int);
     Matrix& operator=(Matrix mt);
-    void mySwap(Matrix &another);
     Matrix& operator+=(const Matrix& mt);
     Matrix& operator-=(const Matrix& mt);
     Matrix& operator*=(const Matrix& mt);
     Matrix& operator*=(double number);
     Matrix& operator/=(double number);
-    Matrix createQ();
-    Matrix createRank();
-    void getC(int* arr, const int arrSize)const;
-    double sumOfCal(const int column)const;
-    void importanceCalculate(int* numOf1)const;
 };
 

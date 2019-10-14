@@ -20,27 +20,29 @@ using namespace std;
 int main()
 {
     //get the number of lines(rows) of input
-    const int numOfRow = helper::getRow("../connectivity.txt");
-    const int numOfCol = numOfRow;
+    const int matrixSize = helper::getRow("../connectivity.txt");
     //create 2d array from the input file
-    double** inputMT = helper::getInputMt("../connectivity.txt", numOfRow);
+    double** inputMT = helper::getInputMt("../connectivity.txt", matrixSize);
     const double p{0.85};
+    const int firstCol = 0;
+    const int precisionLv = 2;
     //create a matrix from the input 2d array
-    Matrix g(inputMT, numOfRow);
-    int sumofCol[numOfCol];
+    Matrix g(inputMT, matrixSize);
+    int sumofCol[matrixSize];
     //get the number of 1s of each column and store it in sumofCol array
-    g.getC(sumofCol, numOfCol);
+    g.getC(sumofCol, matrixSize);
     //calculate importance of pages with the sumofCol
     g.importanceCalculate(sumofCol);
     //create matrix q that has the importance(0.25) of moving to another page by using URL
     Matrix q = g.createQ();
-    Matrix m(numOfRow);
     //create matrix m that has probability click links + probability teleport
+    Matrix m(matrixSize);
     m = g*p + q * (1 - p);
     //create rank matrix
     Matrix rank = g.createRank();
+    //converge the result by keeping multyplying rank
     helper::converge(rank, m);
-    double ranksum = rank.sumOfCal(0);
+    double ranksum = rank.sumOfCal(firstCol);
     rank /= ranksum;
-    cout<<fixed<<std::setprecision(2)<<rank;
+    cout<<fixed<<std::setprecision(precisionLv)<<rank;
 }
