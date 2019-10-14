@@ -4,10 +4,10 @@
 
 #include "helper.hpp"
 
-int helper::getRow(const string filename) {
+int helper::getRow(const string title) {
     string line;
     int numberOfLine = 0;
-    ifstream f{filename};
+    ifstream f{"../connectivity.txt"};
     if(!f.is_open()){
         cerr<<"unable to open file"<<endl;
         exit(1);
