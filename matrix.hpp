@@ -11,7 +11,7 @@
 
 #endif //ASSIGNMENT1_MATRIX_HPP
 
-
+using namespace std;
 
 
 class Matrix
@@ -28,13 +28,13 @@ private:
     friend Matrix operator*(Matrix origin, double number);
     friend Matrix operator/(Matrix origin, double number);
 public:
-    explicit Matrix(int n = 1);
-    Matrix(int r, int c);
-    Matrix(std::vector<double> arr);
+    explicit Matrix(const int n = 1);
+    Matrix(const int r, const int c);
+    Matrix(const vector<double> arr);
     Matrix(const Matrix& mt);
-    Matrix(double** input, int size);
-    void set_value(int row, int column, double value);
-    double get_value(int row, int column);
+    Matrix(double** input, const int size);
+    void set_value(const int row, const int column, const double value);
+    double get_value(const int row, const int column)const;
     void clear();
     ~Matrix();
     Matrix& operator++();
@@ -50,11 +50,8 @@ public:
     Matrix& operator/=(double number);
     Matrix createQ();
     Matrix createRank();
-    void setMatrix(double **matrix);
-    void getR(int* arr, int mtSize);
-    void getC(int* arr, int mtSize);
-    double sumOfCal(int column);
-    void importanceCalculate(int* column);
-
+    void getC(int* arr, const int arrSize)const;
+    double sumOfCal(const int column)const;
+    void importanceCalculate(int* numOf1)const;
 };
 

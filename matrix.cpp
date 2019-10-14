@@ -1,16 +1,20 @@
 //
-// Created by Sammy on 2019-10-01.
+//Created by Keunsaem Lee on 2019-10-01.
+//Matrix class creates a matrix with various input and provide functionalities to get and set those.
+//It allows user to create a matrix in a numer of ways.
+//To support Google's page rank algorithm, it provides functionalities to create rank, Q matricies.
 //
 #include "matrix.hpp"
 using namespace std;
 
-
-Matrix::Matrix(int n):n(n), r(n), c(n){
+//create a square matrix of which size is n
+Matrix::Matrix(const int n):n(n), r(n), c(n){
     try{
-        if(n <= 0) throw n;
+        if(n <= 0) throw invalid_argument("the square size has to be an integer over 0");
     }
-    catch(int i) {
-
+    catch(invalid_argument e) {
+        cerr<<e.what()<<endl;
+        return;
     }
     matrix = new double* [n];
     for(int i = 0; i < n; ++i)
@@ -22,7 +26,8 @@ Matrix::Matrix(int n):n(n), r(n), c(n){
     }
 }
 
-Matrix::Matrix(int r, int c):n(0), r(r), c(c), matrix(new double*[r]){
+//create a matrix with a certain row and column size
+Matrix::Matrix(const int r, const int c):n(r), r(r), c(c), matrix(new double*[r]){
     try{
         if(r<=0 || c<=0) throw invalid_argument("row and column has to be an integer over 0");
     }
@@ -39,7 +44,8 @@ Matrix::Matrix(int r, int c):n(0), r(r), c(c), matrix(new double*[r]){
     }
 }
 
-Matrix::Matrix(vector<double> arr):n(arr.size()), r(arr.size()), c(arr.size()){
+//accept a vector and create a matrix with that
+Matrix::Matrix(const vector<double> arr):n(arr.size()), r(arr.size()), c(arr.size()){
     size_t arrSize;
     try {
         double sqrtVal;
@@ -59,15 +65,9 @@ Matrix::Matrix(vector<double> arr):n(arr.size()), r(arr.size()), c(arr.size()){
         }
     }
 }
-Matrix::Matrix(double **input, int size) {
-    matrix = input;
-    r=size;
-    c=size;
-    n=size;
-}
-//copy constructor///////////////////////////////////////////////////
+
+//copy constructor
 Matrix::Matrix(const Matrix &mt):n(mt.n), r(mt.r), c(mt.c) {
-    //do i have to copy it like this way or i cna just do matrix = mt.matrix
     matrix = new double*[r];
     for(int i = 0; i < r; i++){
         matrix[i] = new double [c];
@@ -79,33 +79,41 @@ Matrix::Matrix(const Matrix &mt):n(mt.n), r(mt.r), c(mt.c) {
     }
 }
 
+//accept 2d array and assign it to the object's matrix
+Matrix::Matrix(double **input, int size) {
+    matrix = input;
+    r=size;
+    c=size;
+    n=size;
+}
 
+//set matrix value at a certain row and column
 void Matrix::set_value(int row, int column, double value) {
     try{
         if(row < 0 || row > r ||column < 0 || column >c){
-            throw 0;
+            throw invalid_argument("the argument should be 0 or positive integer");
         }
     }
-    catch(int e){
-        cerr<< "Error: the argument should be 0 or positive integer" <<endl;
-        cerr<< "the index cannot be bigger than matrix size"<<endl;
+    catch(invalid_argument e){
+        cerr<< e.what()<<endl;
     }
     matrix[row][column] = value;
 }
 
-double Matrix::get_value(int row, int column) {
+//getter for matrix value at a certain row and column
+double Matrix::get_value(int row, int column)const {
     try{
         if(row < 0 || row > r ||column < 0 || column >c){
-            throw 0;
+            throw invalid_argument("the argument should be 0 or positive integer");;
         }
     }
-    catch(int e){
-        cerr<< "Error: the argument should be 0 or positive integer" <<endl;
-        cerr<< "the index cannot be bigger than matrix size"<<endl;
+    catch(invalid_argument e){
+        cerr<< e.what()<<endl;
     }
     return matrix[row][column];
 }
 
+//clear matrix by setting all values as 0
 void Matrix::clear() {
     for(int i = 0; i<r; i++){
         for(int j = 0; j < c; j++){
@@ -114,10 +122,12 @@ void Matrix::clear() {
     }
 }
 
+//matrix deconstroctor
 Matrix::~Matrix() {
     delete[] matrix;
 }
 
+//swap all data member with another passed matrix
 void Matrix::mySwap(Matrix &another) {
     std::swap(this->n,another.n );
     std::swap(this->r,another.r );
@@ -125,6 +135,7 @@ void Matrix::mySwap(Matrix &another) {
     std::swap(this->matrix,another.matrix );
 }
 
+//override insertion operator to print out matrix's information
 std::ostream& operator<<(std::ostream &os, const Matrix &mt) {
     char website = 'A';
     for(int i = 0; i < mt.r;i++){
@@ -138,6 +149,8 @@ std::ostream& operator<<(std::ostream &os, const Matrix &mt) {
     return os;
 }
 
+//override comparison operator to check if two matricies are identical
+//it returns true if the difference is under the defined tolerance
 bool operator==(const Matrix &mt1, const Matrix &mt2) {
     double tolerance = 0.005;
     if(mt1.r != mt2.r) return false;
@@ -156,6 +169,7 @@ bool operator!=(const Matrix &lhs, const Matrix &rhs) {
     return !operator==(lhs, rhs);
 }
 
+//increament matrix value by 1
 Matrix& Matrix::operator++() {
     for(int i=0; i<r; i++){
         for (int j =0; j<c; j++){
@@ -165,12 +179,14 @@ Matrix& Matrix::operator++() {
     return *this;
 }
 
+//return a copied matrix and increment the original matrix by 1
 Matrix Matrix::operator++(int) {
-    Matrix tmp(*this); //is this a copy constructor
+    Matrix tmp(*this);
     operator++();
     return tmp;
 }
 
+//decrement matrix value by 1
 Matrix& Matrix::operator--() {
     for(int i=0; i<r; i++){
         for (int j =0; j<c; j++){
@@ -180,17 +196,20 @@ Matrix& Matrix::operator--() {
     return *this;
 }
 
+//
 Matrix Matrix::operator--(int) {
     Matrix tmp(*this);
     operator--();
     return tmp;
 }
 
+//return a copied matrix and decrement the original matrix by 1
 Matrix& Matrix::operator=(Matrix mt) {
     mySwap(mt);
     return *this;
 }
 
+//add another matrix value to this matrix
 Matrix& Matrix::operator+=(const Matrix &mt) {
     try{
         if(r != mt.r || c != mt.c) throw invalid_argument("size of matrix is not matched");
@@ -207,11 +226,13 @@ Matrix& Matrix::operator+=(const Matrix &mt) {
     return *this;
 }
 
+//add two matricies and return the result
 Matrix operator+(Matrix origin, const Matrix &mt) {
     origin += mt;
     return origin;
 }
 
+//subtract another matrix value from this matrix
 Matrix& Matrix::operator-=(const Matrix &mt) {
     try{
         if(r != mt.r || c != mt.c) throw invalid_argument("size of matrix is not matched");
@@ -228,11 +249,13 @@ Matrix& Matrix::operator-=(const Matrix &mt) {
     return *this;
 }
 
+//calculate subtraction of two matricies and return the result
 Matrix operator-(Matrix origin, const Matrix &mt) {
     origin -= mt;
     return origin;
 }
 
+//multiply this matrix by another matrix
 Matrix& Matrix::operator*=(const Matrix &mt) {
     try{
         if(c != mt.r) throw invalid_argument("size of matrix is not matched");
@@ -252,7 +275,9 @@ Matrix& Matrix::operator*=(const Matrix &mt) {
     *this = newMT;
     return *this;
 }
-Matrix& Matrix::operator*=(double number) {
+
+//multiply this matrix by a certain constant
+Matrix& Matrix::operator*=(const double number) {
     for(int i = 0; i<r;i++){
         for(int j = 0; j<c ; j++){
             matrix[i][j] = matrix[i][j] * number;
@@ -260,15 +285,20 @@ Matrix& Matrix::operator*=(double number) {
     }
     return *this;
 }
+
+//multiply two matricies and return the result
 Matrix operator*(Matrix origin, const Matrix &mt) {
    origin *= mt;
    return origin;
 }
+
+//multiply two matricies and return the result
 Matrix operator*(Matrix origin, double number){
     origin *= number;
     return origin;
 }
 
+//divide this matrix by a certain constant
 Matrix& Matrix::operator/=(double number) {
     for(int i = 0; i<r;i++){
         for(int j = 0; j<c ; j++){
@@ -277,10 +307,14 @@ Matrix& Matrix::operator/=(double number) {
     }
     return *this;
 }
+
+//divide a matrix by a certain constant and return the result matrix
 Matrix operator/(Matrix origin, double number){
     origin /= number;
     return origin;
 }
+
+//create Q matrix based on this matrix's information
 Matrix Matrix::createQ() {
     Matrix Q(*this);
     for(int i = 0; i<r; i++){
@@ -290,6 +324,8 @@ Matrix Matrix::createQ() {
     }
     return Q;
 }
+
+//create a rank matrix based on this matrix's information
 Matrix Matrix::createRank() {
     Matrix rank(r,1);
     for(int i = 0 ; i < r; i++){
@@ -297,53 +333,40 @@ Matrix Matrix::createRank() {
     }
     return rank;
 }
-void Matrix::getR(int *a, int n) {
-    try{
-        if(n!=this->n) throw invalid_argument("the array size has to be the same as matrix size");
-    }
-    catch(invalid_argument e) {
-        cerr<<e.what()<<endl;
-    }
 
-    for(int i = 0; i < r ; i++){
-        int sum = 0;
-        for(int j = 0; j<c; j++){
-            if(matrix[i][j] >= 1) sum += matrix[i][j];
-        }
-        a[i] = sum;
-    }
-}
-void Matrix::getC(int *a, int n) {
+//count 1's number of columns of this matrix and store in an array
+void Matrix::getC(int *arr, const int arrsize)const{
     try{
-        if(n!=this->n) throw invalid_argument("the array size has to be the same as matrix size");
+        if(arrsize!=this->n) throw invalid_argument("the array size has to be the same as matrix size");
     }
-    catch(invalid_argument e) {
+    catch(invalid_argument &e) {
         cerr<<e.what()<<endl;
     }
     for(int i = 0; i < c ; i++){
-        int sum = 0;
+        int count = 0;
         for(int j = 0; j<r; j++){
-            if(matrix[j][i] == 1) sum += matrix[j][i];
+            if(matrix[j][i] == 1) count++;
         }
-        a[i] = sum;
+        arr[i] = count;
     }
 }
-double Matrix::sumOfCal(int n){
+
+//calculate the sum of a certain column
+double Matrix::sumOfCal(const int column)const{
     double sum =  0;
     for(int i = 0 ; i<r; i++){
-        sum += matrix[i][n];
+        sum += matrix[i][column];
     }
     return sum;
 }
-void Matrix::setMatrix(double **matrix) {
-    Matrix::matrix = matrix;
-}
 
-void Matrix::importanceCalculate(int *column) {
+//calculate the importance by dividing each value by the number of 1's in a column
+//if the sum of a column is 0, fill it with 1/the number of columns
+void Matrix::importanceCalculate(int *numOf1)const {
     for(int i = 0; i < c; i++){
         for(int j = 0; j < r; j++){
-            if(column[i] != 0){
-                matrix[j][i] /= column[i];
+            if(numOf1[i] != 0){
+                matrix[j][i] /= numOf1[i];
             } else {
                 matrix[j][i] = double(1)/c;
             }

@@ -1,13 +1,16 @@
 //
-// Created by Sammy on 2019-10-13.
+//Created by Keunsaem Lee on 2019-10-13.
+//helper class helps read file and operate Google's page rank algorithm
+//It reads a file and create a 2d array for Matrix class to creeate a right matrix for it
 //
 
 #include "helper.hpp"
 
+//scan a file on the passed path and get the number of lines
 int helper::getRow(const string title) {
     string line;
     int numberOfLine = 0;
-    ifstream f{"../connectivity.txt"};
+    ifstream f{title};
     if(!f.is_open()){
         cerr<<"unable to open file"<<endl;
         exit(1);
@@ -17,7 +20,8 @@ int helper::getRow(const string title) {
     return numberOfLine;
 }
 
-double ** helper::getInputMt(const string title, int row) {
+//scan a file to create 2d array that has 0 and 1s and return it
+double ** helper::getInputMt(const string title, int numOfRow) {
     char c;
     double **inputMT;
     string line;
@@ -26,12 +30,10 @@ double ** helper::getInputMt(const string title, int row) {
         cerr<<"unable to open file"<<endl;
         exit(1);
     }
-
-    inputMT = new double*[row];
-    for(int i = 0; i< row;i++){
-        inputMT[i] = new double [row];
+    inputMT = new double*[numOfRow];
+    for(int i = 0; i < numOfRow; i++){
+        inputMT[i] = new double [numOfRow];
     }
-
     int tempr=0 ,tempc = 0;
     while ((c = f.get ()) != EOF)
     {
@@ -45,4 +47,17 @@ double ** helper::getInputMt(const string title, int row) {
         }
     }
     return inputMT;
+}
+
+//Multiply the transition matrix M by our column matrix rank, and then
+//multiply M by the result and then keep doing this until the rank stops
+//changing
+void helper::converge(Matrix& rank, const Matrix& m) {
+    const double tolerance{0.0001};
+    double val1, val2;
+    do{
+        val1 =  rank.get_value(0,0);
+        rank = m*rank;
+        val2 = rank.get_value(0,0);
+    } while(abs(val1-val2)>tolerance);
 }

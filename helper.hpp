@@ -11,8 +11,9 @@ using namespace std;
 
 class helper {
 public:
-    static int  getRow(string filename);
-    static double**  getInputMt(const string title, int row);
+    static int  getRow(const string filename);
+    static double** getInputMt(const string title, int numOfRow);
+    static void converge(Matrix& rank, const Matrix& m);
 };
 
 

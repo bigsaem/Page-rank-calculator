@@ -8,10 +8,5 @@
 #include "helper.hpp"
 #include <iomanip>
 
-
-using namespace std;
 #endif //ASSIGNMENT1_MAIN_HPP
 
-
-void printInput(double** input, int size);
-Matrix createMatrix(double** input, int size);
